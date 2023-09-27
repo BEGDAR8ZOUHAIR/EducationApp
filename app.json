@@ -3,6 +3,7 @@
     "name": "education-app",
     "slug": "education-app",
     "version": "1.0.0",
+    "scheme": "education-app",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -27,6 +28,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ee4f2c0f-6df4-4e26-a630-ac60c8fde866"
+      }
     }
   }
 }

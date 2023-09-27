@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import Colors from '../Shared/Colors'
 import { Ionicons } from '@expo/vector-icons'
 import * as WebBrowser from 'expo-web-browser'
+import * as Google from 'expo-auth-session/providers/google';
 
 export default function Login()
 {
@@ -10,6 +11,41 @@ export default function Login()
     const [accessToken, setAccessToken] = useState();
     const [userInfo, setUserInfo] = useState();
     // const { userData, setUserData } = useContext(AuthContext)
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        androidClientId: '215102496017-a30hp80r6btv0eqebtbhg5u8fhe1kprh.apps.googleusercontent.com',
+        expoClientId: '215102496017-njhs15ds2r80p9pvkm5da2mngbjss2vt.apps.googleusercontent.com'
+    });
+
+    useEffect(() =>
+    {
+        if (response?.type == 'success')
+        {
+            setAccessToken(response.authentication.accessToken);
+            getUserData();
+        }
+    }, [response]);
+
+    const getUserData = async () =>
+    {
+        try
+        {
+            const resp = await fetch(
+                "https://www.googleapis.com/userinfo/v2/me",
+                {
+                    headers: { Authorization: `Bearer ${response.authentication.accessToken}` },
+                }
+            );
+
+            const user = await resp.json();
+            console.log("user Details", user)
+            setUserInfo(user);
+            setUserData(user);
+            await Services.setUserAuth(user);
+        } catch (error)
+        {
+            // Add your own error handler here
+        }
+    }
 
     return (
         <View>
@@ -18,7 +54,8 @@ export default function Login()
                 <Text style={styles.welcomeText}>Welcome to CodeBox</Text>
                 <Text style={styles.signup}>Login/Signup</Text>
                 <TouchableOpacity style={styles.button}
-                    onPress={() => promptAsync()}>
+                    onPress={() => promptAsync()}
+                >
                     <Ionicons name="logo-google" size={24}
                         color="white" style={{ marginRight: 10 }}
                     />
